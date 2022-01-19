@@ -1,0 +1,27 @@
+name = "fier"
+uuid = "c8fe2bd8-cebf-4367-965e-fa064b3bd0e7"
+authors = ["kmarkert <kel.markert@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+ArgParse = "c7e460c6-2fb9-53a9-8c5b-16f535851c63"
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
+Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
+EmpiricalOrthogonalFunctions = "63ff9c73-14d6-49bd-be05-5ad278f77d6a"
+HistogramThresholding = "2c695a8d-9458-5d45-9878-1b8a99cf7853"
+ImageFiltering = "6a3955dd-da59-5b1f-98d4-e7296123deb5"
+Images = "916415d5-f1e6-5110-898d-aaa5f9f070e0"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Logging = "56ddb016-857b-54e1-b83d-db4d58db5568"
+MKL = "33e6dc65-8f57-5167-99aa-e5a354878fb2"
+NCDatasets = "85f8d34a-cbdd-5861-8df4-14fed0d494ab"
+Polynomials = "f27b6e38-b328-58d1-80ce-0feddd5e7a45"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+TOML = "fa267f1f-6049-4f14-aa54-33bafae1ed76"
+
+[compat]
+DataFrames = "^1.2.2"
+NCDatasets = "^0.11.7"

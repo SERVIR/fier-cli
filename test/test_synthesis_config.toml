@@ -1,0 +1,27 @@
+# This is a TOML document.
+title = "TOML Example"
+
+[fit]
+path = "/Users/kmarkert/reof_test_out1.nc"
+timevar = "time"
+xvar = "lon"
+yvar ="lat"
+
+[tables]
+paths = [
+    "/Users/kmarkert/Documents/github/fier-cli/test/data/DailyAveH_KH-020101_manual.csv",
+    "/Users/kmarkert/Documents/github/fier-cli/test/data/DailyAveH_KH-020102_manual.csv",
+    "/Users/kmarkert/Documents/github/fier-cli/test/data/DailyAveH_KH-019806_manual.csv",
+    "/Users/kmarkert/Documents/github/fier-cli/test/data/DailyAveH_KH-033402_manual.csv"
+]
+timecol = "Date"
+datacol = "H"
+
+[output]
+path = "/Users/kmarkert/synthesis_test_out1.nc"
+starttime =  "2019-05-01"
+endtime = "2019-12-31"
+
+[options]
+corthresh = 0.5
+water = true

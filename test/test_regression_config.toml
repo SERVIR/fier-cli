@@ -1,0 +1,32 @@
+# This is a TOML document.
+title = "TOML Example"
+
+[observations]
+path = "/Users/kmarkert/Documents/kh_reof_stack1.nc"
+timevar = "time"
+xvar = "lon"
+yvar ="lat"
+datavar = "VV"
+
+[tables]
+paths = [
+    "/Users/kmarkert/Documents/github/fier-cli/test/data/DailyAveH_KH-020101_manual.csv",
+    "/Users/kmarkert/Documents/github/fier-cli/test/data/DailyAveH_KH-020102_manual.csv",
+    "/Users/kmarkert/Documents/github/fier-cli/test/data/DailyAveH_KH-019806_manual.csv",
+    "/Users/kmarkert/Documents/github/fier-cli/test/data/DailyAveH_KH-033402_manual.csv"
+]
+timecol = "Date"
+datacol = "H"
+
+[geoglows]
+path = ""
+rivids = [
+    999999
+]
+
+[output]
+path = "/Users/kmarkert/reof_test_out1.nc"
+
+[options]
+nmodes = 4
+removeoutliers = true

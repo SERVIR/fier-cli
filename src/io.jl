@@ -23,6 +23,31 @@ function read_tables(
     return dfs
 end
 
+function read_geoglows(path::AbstractString, rivids::AbstractVector{Int}, dates::Vector{DateTime})
+    ds = NCDataset(path,"r")
+
+    qdates = ds["time"][:]
+
+    rividlookup = ds["rivid"][:]
+
+    idx = findall(x -> x in rivids, rividlookup)
+    q = ds["Qout"][:][idx,:]
+
+    close(ds)
+
+    dfs = DataFrame[]
+    for i in 1:length(rivids)
+        df = DataFrame(
+            "Date" => qdates,
+            "Q" => q[i,:]
+        )
+        df_sel = filter_dates(df, dates; timecol = "Date")
+        push!(dfs,df_sel)
+    end
+
+    return dfs
+end
+
 function read_stack(
     path::AbstractString,
     datavar::AbstractString;
@@ -74,7 +99,12 @@ function write_fits(
 
     ncdates = @. Dates.value(Day(DateTime(dates) - refdate))
 
-    ds = NCDataset(outpath, "c")
+    ds = NCDataset(outpath, "c", attrib=Dict(
+        "title" => "FIER spatial and temporal Mode coefficients",
+        "history" => "date_created: $(now(Dates.UTC))+00:00",
+        "institution" => "NASA SERVIR, Univ. AL in Huntsville, Brigham Young Univ., Univ. of Houston",
+        "references" => "https://doi.org/10.1016/j.rse.2020.111732"
+    ))
 
     # set up dimensions
     defDim(ds, "lon", length(lons))
@@ -123,8 +153,18 @@ function write_fits(
         Float32,
         ("lon", "lat", "mode"),
         fillvalue = -9999.0,
+        deflatelevel = 4,
+        shuffle=true
     )
-    ct = defVar(ds, "center", Float32, ("lon", "lat"), fillvalue = -9999.0)
+    ct = defVar(
+        ds,
+        "center",
+        Float32,
+        ("lon", "lat"),
+        fillvalue = -9999.0,
+        deflatelevel = 4,
+        shuffle=true
+    )
     tm = defVar(ds, "temporal_modes", Float32, ("time", "mode"))
     cv = defVar(ds, "coefficients", Float32, ("order", "mode"))
     cr = defVar(ds, "correlations", Float32, ("trial", "mode"))
@@ -168,24 +208,32 @@ function read_fit(path::AbstractString,
     center = ds["center"][:]
     coefficients = ds["coefficients"][:]
     correlations = ds["correlations"][:]
+    variances = ds["variancefraction"][:]
 
     close(ds)
 
-    return spatial_modes, temporal_modes, center, coefficients, correlations, lons, lats
+    return spatial_modes, temporal_modes, center, coefficients, correlations, variances, lons, lats
 end
 
-function write_synthesis(outpath,
+function write_synthesis(
+    outpath,
     data,
     dates,
     lons,
-    lats,
+    lats;
+    water=nothing
 )
 
     refdate = DateTime("1970-01-01")
 
     ncdates = @. Dates.value(Day(DateTime(dates) - refdate))
 
-    ds = NCDataset(outpath, "c")
+    ds = NCDataset(outpath, "c", attrib=Dict(
+        "title" => "FIER synthesized outputs",
+        "history" => "date_created: $(now(Dates.UTC))+00:00",
+        "institution" => "NASA SERVIR, Univ. AL in Huntsville, Brigham Young Univ., Univ. of Houston",
+        "references" => "https://doi.org/10.1016/j.rse.2020.111732"
+    ))
 
     # set up dimensions
     defDim(ds, "lon", length(lons))
@@ -231,13 +279,29 @@ function write_synthesis(outpath,
         Float32,
         ("lon", "lat", "time"),
         fillvalue = -9999.0,
+        deflatelevel = 4,
+        shuffle=true
     )
+
 
     # write data to the variables
     x[:] = lons
     y[:] = lats
     t[:] = ncdates
     d[:] = data
+
+    if !isnothing(water)
+        w = defVar(
+            ds,
+            "water",
+            UInt8,
+            ("lon", "lat", "time"),
+            fillvalue = 255,
+            deflatelevel = 4,
+            shuffle=true
+        )
+        w[:] = water
+    end
 
     close(ds)
 

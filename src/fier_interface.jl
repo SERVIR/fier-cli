@@ -1,20 +1,30 @@
 
 function buildregressions(config::Dict{<:Any,<:Any})
 
-    @info config
+    # @info config
 
 
     # extract out the information on reading observation
-    obspath = config["observations"]["path"]
-    datavar = config["observations"]["datavar"]
-    timevar = config["observations"]["timevar"]
-    yvar = config["observations"]["yvar"]
-    xvar = config["observations"]["xvar"]
+    obspath = config["input"]["path"]
+    datavar = config["input"]["datavar"]
+    timevar = config["input"]["timevar"]
+    yvar = config["input"]["yvar"]
+    xvar = config["input"]["xvar"]
 
-    # extract out the information on hydrologic info for regressions
-    intables = config["tables"]["paths"]
-    datacol = config["tables"]["datacol"]
-    timecol = config["tables"]["timecol"]
+    if "geoglows" in keys(config)
+        ingeoglows = config["geoglows"]["path"]
+        rivids = config["geoglows"]["rivids"]
+        datacol = "Q"
+        timecol = "Date"
+    elseif "tables" in keys(config)
+        # extract out the information on hydrologic info for regressions
+        intables = config["tables"]["paths"]
+        datacol = config["tables"]["datacol"]
+        timecol = config["tables"]["timecol"]
+    else
+        @error "table inputs or geoglows inputs must be specified"
+        return
+    end
 
     # extract out output location for regression
     outpath = config["output"]["path"]
@@ -43,9 +53,14 @@ function buildregressions(config::Dict{<:Any,<:Any})
         yvar = yvar,
     )
 
-    # read in the data tables
-    @info "Reading table data"
-    dfs = read_tables(intables, dates; timecol = timecol, datacol = datacol)
+    if "geoglows" in keys(config)
+        @info "reading geoglows outputs"
+        dfs = read_geoglows(ingeoglows, rivids, dates)
+    else
+        # read in the data tables
+        @info "Reading table data"
+        dfs = read_tables(intables, dates; timecol = timecol, datacol = datacol)
+    end
 
     # calculate the eof and apply rotations
     @info "EOF calculation"
@@ -84,10 +99,10 @@ function synthesize(config::Dict{<:Any,<:Any})
     @info config
 
     # extract out the information on reading observation
-    fitpath = config["fit"]["path"]
-    timevar = config["fit"]["timevar"]
-    yvar = config["fit"]["yvar"]
-    xvar = config["fit"]["xvar"]
+    fitpath = config["input"]["path"]
+    timevar = config["input"]["timevar"]
+    yvar = config["input"]["yvar"]
+    xvar = config["input"]["xvar"]
 
     # extract out the information on hydrologic info for synthesis
     intables = config["tables"]["paths"]
@@ -96,23 +111,34 @@ function synthesize(config::Dict{<:Any,<:Any})
 
     # extract out output location for synthesis
     outpath = config["output"]["path"]
-    starttime = config["output"]["starttime"]
-    endtime = config["output"]["endtime"]
+
+    if "dates" in keys(config["output"])
+        dates = DateTime.(config["output"]["dates"])
+    elseif "daterange" in keys(config["output"])
+        drange = config["output"]["daterange"]
+        starttime = drange[1]
+        endtime = drange[2]
+        # create date information
+        dates = collect(DateTime(starttime):Day(1):DateTime(endtime))
+    else
+        @error "'daterange' or 'dates' values could not be parsed"
+        return
+    end
 
     # extract processing options if any
     if "options" in keys(config)
         optkeys = keys(config["options"])
 
         corthresh = "corthresh" in optkeys ? config["options"]["corthresh"] : 0.6
+        procwater = "water" in optkeys ? config["options"]["water"] : true
 
     end
 
     #extract out the data stored from the fit process
-    spatial_modes, temporal_modes, center, coefficients, correlations, lons, lats =
+    spatial_modes, temporal_modes, center, coefficients, correlations, vars, lons, lats =
         read_fit(fitpath)
 
-    # create date information
-    dates = collect(DateTime(starttime):Day(1):DateTime(endtime))
+
 
     # read in the data tables
     @info "Reading table data"
@@ -132,8 +158,19 @@ function synthesize(config::Dict{<:Any,<:Any})
         xvals,
         coefficients,
         correlations,
+        vars;
         corthresh = corthresh,
     )
+
+    if procwater
+        @info "segmenting water"
+        water=zeros(Union{Missing,Bool}, size(synthesis));
+        @inbounds for i in 1:size(synthesis,3)[1]
+            water[:,:,i] = extractwater(synthesis[:,:,i],init_thresh=-16)
+        end
+    else
+        water = nothing
+    end
 
     # watermaps = extractwater(synth)
 
@@ -143,7 +180,8 @@ function synthesize(config::Dict{<:Any,<:Any})
         synthesis,
         dates,
         lons,
-        lats,
+        lats;
+        water=water
     )
 
 end

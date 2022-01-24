@@ -1,14 +1,17 @@
 module fier
 
+using MKL
 using ArgParse
 using Base.Threads
 using CSV
 using DataFrames
 using Dates
+# using Distributions
 using EmpiricalOrthogonalFunctions
+using HistogramThresholding
+using ImageFiltering
 using LinearAlgebra
 using Logging
-using MKL
 using NCDatasets
 using Statistics
 using StatsBase

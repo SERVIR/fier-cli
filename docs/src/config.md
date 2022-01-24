@@ -4,17 +4,17 @@ The different options and data setup for running FIER is defined using configura
 
 ## `buildregressions`
 
-An example of a configuration file for the `buildregressions` command can be found on the Github repo: https://github.com/SERVIR/fier-cli/blob/main/test/test_regression_config.toml
+An example of a configuration file for the `buildregressions` command can be found on the Github repo: [Regression config example](https://github.com/SERVIR/fier-cli/blob/main/test/test_regression_config.toml)
 
 ### [input]
 
-The inputs section defines the input netCDF file and structure of dimensions to extract data.
+The inputs section defines the input netCDF file and structure of dimensions to extract data. The time dimension in the input file is used to select data from other time series.
 
 * `path` : Full path to netCDF file of space-time observations to extract signals from
 * `timevar` : variable name for time dimension in netCDF file
 * `xvar` : variable name for x coordinate dimension in netCDF file
 * `yvar` : variable name for y coordinate in netCDF file
-* `datavar` : variable name for y coordinate in netCDF file
+* `datavar` : variable name for data to use in netCDF file
 
 #### Example
 
@@ -95,7 +95,7 @@ removeoutliers = true
 
 ## `synthesis`
 
-An example of a configuration file for the `synthesis` command can be found on the Github repo: https://github.com/SERVIR/fier-cli/blob/main/test/test_synthesis_config.toml
+An example of a configuration file for the `synthesis` command can be found on the Github repo: [Synthesis config example](https://github.com/SERVIR/fier-cli/blob/main/test/test_synthesis_config.toml)
 
 
 ### [input]

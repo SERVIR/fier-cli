@@ -10,7 +10,7 @@ git clone https://github.com/serivr/fier-cli.git
 
 cd fier-cli/build/
 
-julia --color=yes --optimize=3 --compile=all buildcli.jl
+julia --color=yes buildcli.jl
 ```
 After running `buildcli.jl` there will be some output to the console and a directory called "fierapp" in the build directory.
 
@@ -22,7 +22,7 @@ This software has been built and tested using the following platforms and Julia 
 
 | Operating System | OS Version | Julia Version        |
 | ---------------- | ---------- | -------------------- |
-| MacOS            | 11.6       | v1.6.4 <br/> v1.7.1  |
+| MacOS            | 11.6       | v1.6.4 <br/> v1.7.0  |
 | Windows          | 10         | v1.X.X        |
 | Linux            | tbd        | tbd        |
 

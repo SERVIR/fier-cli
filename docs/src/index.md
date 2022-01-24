@@ -6,7 +6,7 @@ Command line interface for running the Forecasting of Inundation Extents using R
 This software is written using the [Julia language](https://julialang.org/), thus Julia needs to be installed for use (it is recommended to use the [official binaries](https://julialang.org/downloads/)). No other dependencies are required, the build script illustrated below installs all of the necessary packages and dependencies.
 
 ```
-git clone https://github.com/serivr/fier-cli.git
+git clone https://github.com/servir/fier-cli.git
 
 cd fier-cli/build/
 

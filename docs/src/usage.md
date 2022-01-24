@@ -21,4 +21,4 @@ Step 2 can be executed using the following command:
 ./fierapp/bin/fier synthesis -c config.toml
 ```
 
-The only input into the commands are a configuration file which specifies the data inputs and outputs. The configuration files follow a specific format with sections for the program to parse, detailed information on how to setup the configuration files can be found on the [Configuration docs page](_)
+The only input into the commands are a configuration file which specifies the data inputs and outputs. The configuration files follow a specific format with sections for the program to parse, detailed information on how to setup the configuration files can be found on the [Configuration docs page](config)

@@ -58,7 +58,6 @@ function input_data(pt,secretkey,outfile;resolution::Float64=0.0015, basinlvl::I
    session = EESession(secretkey)
    # Initialize(session)
 
-   # box = Rectangle(bbox...)
    point = Point(pt...)
    basins = filterBounds(EE.FeatureCollection("WWF/HydroSHEDS/v1/Basins/hybas_$basinlvl"), point);
    basin_geo = geometry(basins)
@@ -75,9 +74,9 @@ function input_data(pt,secretkey,outfile;resolution::Float64=0.0015, basinlvl::I
 
    scenes = filter(
       filterBounds(EE.ImageCollection("COPERNICUS/S1_GRD"), basins),
-      And(EE.Filter(),
-          eq(EE.Filter(),"orbitProperties_pass", path),
-          eq(EE.Filter(),"instrumentMode", "IW"),
+      And(
+         eq(EE.Filter(),"orbitProperties_pass", path),
+         eq(EE.Filter(),"instrumentMode", "IW"),
       )
    )
 
